@@ -5,7 +5,46 @@ Avalonx
 
 什么时候需要用avalonx
 ---------------------
-在不同viewmodel之间共享特定数据，并自动更新其对应的视图。目前不适合的应用环境：单页应用
+在不同viewmodel之间共享特定数据，并自动更新其对应的视图。
+
+目前不适合的应用环境：单页应用
+
+范例
+--------
+
+```html
+<!-- 点击button后更新A和B中的name -->
+
+<div ms-controller="A">
+  <div ms-bind="store.name"></div>
+  <button ms-click="update">update</button>
+</div>
+
+<div ms-controller="B">
+  <div ms-bind="store.name"></div>
+</div>
+```
+
+```js
+
+avalonx.store({
+  name: 'A'
+});
+
+a = avalonx.define({
+  $id: 'A',
+  $store: '$store'
+  update: function() {
+    avalonx.patching('name', 'B').dispatch();
+  }
+})
+
+b = avalonx.define({
+  $id: 'B',
+  $store: '$store'
+})
+
+```
 
 如何引入
 -------
@@ -15,7 +54,7 @@ Avalonx
 
 接口
 -------
-引入js文件后即可在全局页面使用avalonx
+引入js文件后即可在全局页面使用avalonx。
 
 ### avalonx.define(param)
 >参数 param 类型 object
