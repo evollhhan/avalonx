@@ -45,10 +45,14 @@
             },
 
             store: function(param) {
-                for(var k in param)
+                for(var k in param) {
+                    if(typeof param[k] === 'object' || typeof param[k] === 'function')
+                        return 0;
                     state[k] = param[k];
+                }
                 for(var vm in vmodel)
                     vmodel[vm].store = state;
+                return 1;
             },
 
             patch: function(key, val) {
@@ -73,13 +77,22 @@
                 }
             },
 
+            patching: function(key, val) {
+                if(typeof key === 'object')
+                    for(var i in key)
+                        if(state.hasOwnProperty(i))
+                            patch[i] = key[i];                    
+                else
+                    if(state.hasOwnProperty(key))
+                        patch[key] = val;
+                return this; 
+            },
+
             unpatch: function(key) {
-                if(key) {
+                if(key)
                     delete patch[key];
-                }
-                else {
+                else
                     patch = {};
-                }
             },
 
             dispatch: function(key) {
